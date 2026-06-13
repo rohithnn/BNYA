@@ -1,0 +1,561 @@
+/* ═══════════════════════════════════════════════════════════════
+   BNYA — Bharath Nava Yuva Association
+   Inauguration Landing Page — Stylesheet
+   Palette:
+     --ivory      #FFFDF5   (parchment white)
+     --champagne  #F5E6C8   (warm scroll bg)
+     --gold       #D4A017   (accent / ornament)
+     --saffron    #E8730A   (primary brand)
+     --maroon     #5C1010   (deep anchor)
+     --velvet     #1A0A0A   (background)
+═══════════════════════════════════════════════════════════════ */
+
+/* ── RESET & BASE ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ivory:     #FFFDF5;
+  --champagne: #F5E6C8;
+  --gold:      #D4A017;
+  --saffron:   #E8730A;
+  --maroon:    #5C1010;
+  --velvet:    #1A0A0A;
+
+  --font-display: 'Cinzel', 'Georgia', serif;
+  --font-body:    'Cormorant Garamond', 'Georgia', serif;
+
+  --ease-reveal: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: var(--velvet);
+  color: var(--ivory);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── BACKGROUND MANDALA ───────────────────────────────────── */
+.bg-mandala {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 0;
+}
+.bg-mandala svg {
+  width: min(90vw, 90vh);
+  height: min(90vw, 90vh);
+  animation: mandala-spin 120s linear infinite;
+}
+@keyframes mandala-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LANDING SCREEN
+═══════════════════════════════════════════════════════════ */
+.landing-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(212,160,23,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 90%, rgba(92,16,16,0.4) 0%, transparent 70%),
+    var(--velvet);
+  transition: opacity 0.7s var(--ease-reveal), visibility 0.7s;
+}
+/* Hidden state (after reveal button click) */
+.landing-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.landing-content {
+  text-align: center;
+  padding: 2rem;
+  max-width: 560px;
+  animation: fade-up 1.2s var(--ease-reveal) both;
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.diya-icon {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  display: block;
+  margin-bottom: 1.25rem;
+  filter: drop-shadow(0 0 18px rgba(232,115,10,0.6));
+  animation: diya-flicker 3s ease-in-out infinite;
+}
+@keyframes diya-flicker {
+  0%,100% { filter: drop-shadow(0 0 18px rgba(232,115,10,0.6)); }
+  50%      { filter: drop-shadow(0 0 28px rgba(212,160,23,0.9)); }
+}
+
+.landing-eyebrow {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: clamp(0.85rem, 2.2vw, 1.05rem);
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.6rem;
+  opacity: 0.85;
+}
+
+.landing-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2.6rem, 8vw, 5.5rem);
+  line-height: 1.05;
+  color: var(--ivory);
+  margin-bottom: 1rem;
+  text-shadow: 0 0 40px rgba(212,160,23,0.3);
+}
+
+.landing-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 2.8vw, 1.25rem);
+  font-weight: 300;
+  color: var(--champagne);
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+  opacity: 0.9;
+}
+.landing-subtitle-accent {
+  font-family: var(--font-display);
+  font-size: 0.78em;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 0.18em;
+}
+
+/* ── REVEAL BUTTON ────────────────────────────────────────── */
+.reveal-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  margin-bottom: 2rem;
+}
+.reveal-btn__inner {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.85rem 2.5rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(0.85rem, 2.2vw, 1rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--velvet);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--saffron) 100%);
+  border-radius: 3px;
+  border: 2px solid var(--gold);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.reveal-btn__icon {
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+}
+.reveal-btn__glow {
+  position: absolute;
+  inset: -4px;
+  border-radius: 6px;
+  background: radial-gradient(ellipse at center, rgba(212,160,23,0.5), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.reveal-btn:hover .reveal-btn__inner,
+.reveal-btn:focus-visible .reveal-btn__inner {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(232,115,10,0.5);
+}
+.reveal-btn:hover .reveal-btn__glow,
+.reveal-btn:focus-visible .reveal-btn__glow {
+  opacity: 1;
+}
+.reveal-btn:active .reveal-btn__inner {
+  transform: translateY(0);
+}
+/* Disable after click */
+.reveal-btn:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.landing-flourish {
+  font-size: 0.7rem;
+  letter-spacing: 0.6em;
+  color: var(--gold);
+  opacity: 0.5;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLL STAGE
+═══════════════════════════════════════════════════════════ */
+.scroll-stage {
+  position: relative;
+  z-index: 5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  /* Hidden until animation starts */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+.scroll-stage.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── SCROLL RODS ──────────────────────────────────────────── */
+/*
+   The "rod" elements are horizontal cylinders.
+   They start stacked at center (translateY 0) and
+   animate to top/bottom to reveal the parchment.
+*/
+.rod {
+  position: relative;
+  width: min(780px, 94vw);
+  height: 28px;
+  border-radius: 14px;
+  background: linear-gradient(
+    to bottom,
+    #7a3a0a 0%,
+    #b05a1a 30%,
+    #d4831f 50%,
+    #b05a1a 70%,
+    #7a3a0a 100%
+  );
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.6),
+    inset 0 1px 2px rgba(255,200,100,0.4),
+    inset 0 -1px 2px rgba(0,0,0,0.4);
+  z-index: 20;
+  flex-shrink: 0;
+
+  /* End caps as pseudo-elements */
+}
+.rod::before,
+.rod::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #d4831f, #7a3a0a);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+.rod::before { left:  -12px; }
+.rod::after  { right: -12px; }
+
+/* Container for alignment */
+.scroll-container {
+  position: relative;
+  width: min(780px, 94vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Initial state: both rods overlap at center */
+.rod--top {
+  margin-bottom: -14px; /* overlap with top edge of parchment */
+}
+.rod--bottom {
+  margin-top: -14px; /* overlap with bottom edge of parchment */
+}
+
+/* ── SCROLL PARCHMENT ─────────────────────────────────────── */
+.scroll-parchment {
+  width: min(780px, 94vw);
+  overflow: hidden;
+  /* Parchment texture via layered CSS gradients */
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 34px,
+      rgba(92,16,16,0.04) 34px,
+      rgba(92,16,16,0.04) 35px
+    ),
+    linear-gradient(
+      160deg,
+      #fdf6e3 0%,
+      #f5e6c8 30%,
+      #ede0ba 60%,
+      #f0deb0 100%
+    );
+  border-left:  3px solid rgba(212,160,23,0.5);
+  border-right: 3px solid rgba(212,160,23,0.5);
+  box-shadow:
+    0 0 60px rgba(212,160,23,0.15),
+    inset 0 0 80px rgba(92,16,16,0.08);
+
+  /* Start collapsed (height 0) and expand via transition */
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 1.2s 0.3s var(--ease-reveal), opacity 1.2s 0.3s var(--ease-reveal);
+  position: relative;
+  z-index: 15;
+}
+.scroll-parchment.unrolled {
+  max-height: 1200px;
+  opacity: 1;
+}
+
+/* Inner padding so content appears after rod spacing */
+.parchment-inner {
+  padding: 1.25rem 2.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+@media (max-width: 600px) {
+  .parchment-inner { padding: 1rem 1.25rem 0.75rem; }
+}
+
+/* ── TOP DECORATIVE BAND (gold border) ───────────────────── */
+.parchment-inner::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--saffron), var(--gold), transparent);
+  margin-bottom: 0.75rem;
+  border-radius: 2px;
+}
+
+/* ── NGO LOGO ─────────────────────────────────────────────── */
+.logo-wrap {
+  opacity: 0;
+  transform: scale(0.7);
+  /* JS will add .revealed class */
+  transition: opacity 0.6s var(--ease-reveal), transform 0.6s var(--ease-reveal);
+  margin-bottom: 0.5rem;
+}
+.logo-wrap.revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.logo-svg, .logo-img {
+  width: clamp(70px, 12vh, 100px);
+  height: clamp(70px, 12vh, 100px);
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 18px rgba(212,160,23,0.45))
+    drop-shadow(0 0  6px rgba(232,115,10,0.3));
+  animation: logo-pulse 4s ease-in-out infinite;
+}
+@keyframes logo-pulse {
+  0%,100% { filter: drop-shadow(0 0 18px rgba(212,160,23,0.45)) drop-shadow(0 0 6px rgba(232,115,10,0.3)); }
+  50%      { filter: drop-shadow(0 0 30px rgba(212,160,23,0.75)) drop-shadow(0 0 12px rgba(232,115,10,0.5)); }
+}
+
+/* ── NGO NAME ─────────────────────────────────────────────── */
+.ngo-name-wrap {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  min-height: auto;
+  margin-bottom: 0.25rem;
+  width: 100%;
+}
+
+.ngo-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1rem, 3.2vh, 1.6rem);
+  color: var(--maroon);
+  text-align: center;
+  letter-spacing: 0.14em;
+  line-height: 1.25;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+}
+
+/* Blinking cursor */
+.cursor {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 3.2vh, 1.6rem);
+  color: var(--saffron);
+  font-weight: 300;
+  margin-left: 2px;
+  animation: blink 0.75s step-end infinite;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+.cursor.hidden { opacity: 0; }
+@keyframes blink {
+  0%,100% { opacity: 1; }
+  50%     { opacity: 0; }
+}
+
+/* ── TAGLINE ──────────────────────────────────────────────── */
+.ngo-tagline {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: clamp(0.8rem, 2.2vh, 1rem);
+  color: var(--saffron);
+  letter-spacing: 0.06em;
+  margin-bottom: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.8s var(--ease-reveal);
+  text-align: center;
+}
+.ngo-tagline.revealed { opacity: 1; }
+
+/* ── FEATURED IMAGE ───────────────────────────────────────── */
+.featured-image-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.9s var(--ease-reveal), transform 0.9s var(--ease-reveal);
+  margin-bottom: 0.75rem;
+}
+.featured-image-wrap.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.featured-image-inner {
+  display: flex;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 3px rgba(212,160,23,0.5),
+    0 0 0 6px rgba(212,160,23,0.15),
+    0 16px 48px rgba(92,16,16,0.25);
+}
+
+.featured-svg, .featured-img {
+  display: block;
+  max-width: 100%;
+  height: clamp(140px, 26vh, 220px);
+  width: auto;
+  object-fit: contain;
+}
+
+/* Corner ornaments on image frame */
+.featured-image-inner::before,
+.featured-image-inner::after {
+  content: '✦';
+  position: absolute;
+  color: var(--gold);
+  font-size: 1.4rem;
+  line-height: 1;
+  z-index: 2;
+}
+.featured-image-inner::before { top: 8px; left: 10px; }
+.featured-image-inner::after  { top: 8px; right: 10px; }
+
+.featured-caption {
+  margin-top: 0.4rem;
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: clamp(0.75rem, 1.8vh, 0.9rem);
+  color: var(--maroon);
+  text-align: center;
+  opacity: 0.8;
+}
+
+/* ── SCROLL FOOTER ────────────────────────────────────────── */
+.scroll-footer {
+  width: 100%;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.8s var(--ease-reveal) 0.3s;
+  padding-top: 0.5rem;
+}
+.scroll-footer.revealed { opacity: 1; }
+
+.scroll-footer__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  font-size: 1rem;
+  color: var(--saffron);
+  margin-bottom: 0.25rem;
+}
+.scroll-footer__text {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: clamp(0.8rem, 2vw, 0.95rem);
+  color: var(--maroon);
+  opacity: 0.75;
+  margin-bottom: 0.3rem;
+}
+.scroll-footer__year {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  opacity: 0.6;
+}
+
+/* ── BOTTOM DECORATIVE BAND ───────────────────────────────── */
+.parchment-inner::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--saffron), var(--gold), transparent);
+  margin-top: 0.75rem;
+  border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE ADJUSTMENTS
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .ngo-name {
+    font-size: clamp(0.95rem, 5vw, 1.4rem);
+    letter-spacing: 0.06em;
+  }
+  .rod::before, .rod::after {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+/* ── REDUCED MOTION ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
