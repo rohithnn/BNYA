@@ -639,8 +639,12 @@ html, body {
   height: auto;
   filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
 }
+.wick-group {
+  cursor: pointer;
+}
 .wick-hotspot {
-  fill: transparent;
+  fill: rgba(255, 255, 255, 0.01);
+  pointer-events: all;
   cursor: pointer;
   transition: r 0.2s ease;
 }

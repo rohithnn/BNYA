@@ -26,7 +26,7 @@
   const particleCanvas  = document.getElementById('particleCanvas');
   const lampInstruction = document.getElementById('lampInstruction');
   const sacredLamp      = document.getElementById('sacredLamp');
-  const wicks           = document.querySelectorAll('.wick-hotspot');
+  const wickGroups      = document.querySelectorAll('.wick-group');
   
   const featuredImageInner = document.getElementById('featuredImageInner');
   const pillarHeaders     = document.querySelectorAll('.pillar-header');
@@ -498,16 +498,16 @@
     }
   };
 
-  wicks.forEach(wick => {
-    wick.addEventListener('click', (e) => {
+  wickGroups.forEach(group => {
+    group.addEventListener('click', (e) => {
       e.stopPropagation();
       initAudio();
       if (audioCtx.state === 'suspended') {
         audioCtx.resume();
       }
 
-      const index = parseInt(wick.parentNode.getAttribute('data-wick'));
-      const group = document.getElementById(`wickGroup-${index}`);
+      const index = parseInt(group.getAttribute('data-wick'));
+      const wick = group.querySelector('.wick-hotspot');
       
       if (!litWicks.has(index)) {
         litWicks.add(index);
@@ -654,9 +654,5 @@
       }
     });
   });
-
-  /* ── PLEDGE & CANVAS CERTIFICATE GENERATOR ──────────────── */
-
-  const featuredImageInner = document.getElementById('featuredImageInner');
 
 })();
