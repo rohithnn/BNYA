@@ -28,11 +28,9 @@
   const sacredLamp      = document.getElementById('sacredLamp');
   const wicks           = document.querySelectorAll('.wick-hotspot');
   
-  const pillarCards     = document.querySelectorAll('.pillar-card');
-  const pillarHeaders   = document.querySelectorAll('.pillar-header');
-  
   const signerNameInput = document.getElementById('signerName');
   const signPledgeBtn   = document.getElementById('signPledgeBtn');
+  const pledgeForm      = document.getElementById('pledgeForm');
   const certificateWrap = document.getElementById('certificateWrap');
   const certCanvas      = document.getElementById('certCanvas');
   const certImage       = document.getElementById('certImage');
@@ -307,7 +305,10 @@
   audioToggle.addEventListener('click', toggleMute);
 
   /* ── CANVAS FLOWER PETALS & SPARKS SYSTEM ──────────────── */
-  const ctx = particleCanvas.getContext('2d');
+  const ctx = particleCanvas ? particleCanvas.getContext('2d') : null;
+  if (!ctx) {
+    console.warn('Particle canvas 2D context unavailable; particle effects disabled.');
+  }
   let particles = [];
   let mouseX = undefined;
   let mouseY = undefined;
@@ -468,8 +469,13 @@
 
   // Spawn petals on click/touch
   window.addEventListener('click', (e) => {
-    // Avoid spawning bursts when clicking buttons or inputs to keep UI clean
-    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.classList.contains('wick-hotspot')) {
+    const target = e.target;
+    const isControl = target instanceof Element && (
+      target.closest('button') ||
+      target.closest('input') ||
+      target.classList.contains('wick-hotspot')
+    );
+    if (isControl) {
       return;
     }
     spawnBurst(e.clientX, e.clientY, 15);
@@ -615,16 +621,17 @@
     featuredWrap.classList.add('revealed');
     await wait(600);
 
-    // ── STEP 9: Fade in Vision Pillars Accordion ──────────
-    document.getElementById('pillarsSection').classList.add('revealed');
-    await wait(500);
-
-    // ── STEP 10: Fade in Pledge & Signature Card ──────────
+    // ── STEP 9: Fade in Pledge & Signature Card ──────────
     document.getElementById('pledgeSection').classList.add('revealed');
     await wait(500);
 
-    // ── STEP 11: Fade in footer ────────────────────────────
+    // ── STEP 10: Fade in footer ────────────────────────────
     scrollFooter.classList.add('revealed');
+
+    // ── STEP 11: Redirect after 20 seconds ───────────────
+    setTimeout(() => {
+      window.location.href = 'https://bnya.vercel.app';
+    }, 20000);
   };
 
   revealBtn.addEventListener('click', startReveal);
@@ -823,21 +830,23 @@
     const name = signerNameInput.value.trim();
     if (!name) {
       signerNameInput.focus();
-      signerNameInput.style.borderColor = 'red';
+      signerNameInput.style.borderBottom = '2px solid #c0392b';
+      signerNameInput.style.animation = 'input-shake 0.4s ease';
+      setTimeout(() => { signerNameInput.style.animation = ''; }, 400);
       return;
     }
 
-    signerNameInput.style.borderColor = '';
+    signerNameInput.style.borderBottom = '';
     
     // Play celebratory chimed arpeggio
     playCelebrationChime();
     
     // Hide form, show certificate block
-    document.getElementById('pledgeForm').classList.add('hidden');
+    pledgeForm?.classList.add('hidden');
     certificateWrap.classList.remove('hidden');
 
     // Wait for fonts to be ready so signature renders correctly in "Alex Brush"
-    document.fonts.ready.then(() => {
+    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => {
       generateCertificate(name);
       
       // Trigger spark shower around certificate
@@ -857,7 +866,11 @@
   });
 
   const handleDownloadCert = () => {
-    const name = signerNameInput.value.trim().replace(/\s+/g, '_');
+    if (!certImage.src) {
+      return;
+    }
+
+    const name = signerNameInput.value.trim().replace(/\s+/g, '_') || 'BNYA';
     const link = document.createElement('a');
     link.download = `BNYA_Pledge_Certificate_${name}.png`;
     link.href = certImage.src;

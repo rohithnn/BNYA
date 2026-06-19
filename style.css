@@ -204,13 +204,13 @@ html, body {
   cursor: not-allowed;
 }
 /* Unlocked celebration state — all wicks lit */
-.reveal-btn.btn-unlocked {
+.reveal-btn.btn-unlocked .reveal-btn__inner {
   animation: btn-unlock-pulse 1s ease-in-out 3;
 }
 @keyframes btn-unlock-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(232,115,10,0); }
-  40%  { box-shadow: 0 0 0 10px rgba(212,160,23,0.45); }
-  100% { box-shadow: 0 0 0 0 rgba(232,115,10,0); }
+  0%   { box-shadow: 0 8px 32px rgba(232,115,10,0.3); }
+  40%  { box-shadow: 0 8px 32px rgba(232,115,10,0.3), 0 0 0 12px rgba(212,160,23,0.35); }
+  100% { box-shadow: 0 8px 32px rgba(232,115,10,0.3); }
 }
 
 .landing-flourish {
@@ -364,17 +364,22 @@ html, body {
   border-radius: 2px;
 }
 
-/* ── NGO LOGO ─────────────────────────────────────────────── */
+/* ── NGO LOGO ──────────────────────────────────────────────── */
 .logo-wrap {
   opacity: 0;
   transform: scale(0.7);
   /* JS will add .revealed class */
   transition: opacity 0.6s var(--ease-reveal), transform 0.6s var(--ease-reveal);
   margin-bottom: 0.5rem;
+  transform-style: preserve-3d;
 }
 .logo-wrap.revealed {
   opacity: 1;
   transform: scale(1);
+}
+/* 3D tilt only after reveal — avoids fighting scale-up transition */
+.logo-wrap.revealed:hover {
+  transition: transform 0.15s ease-out;
 }
 
 .logo-svg, .logo-img {
@@ -975,14 +980,20 @@ html, body {
   display: none !important;
 }
 
-/* 3D PARALLAX EFFECT */
+/* 3D PARALLAX EFFECT — featured image */
 .featured-image-inner {
   transition: transform 0.15s ease-out;
   transform-style: preserve-3d;
 }
-.logo-wrap {
-  transition: transform 0.15s ease-out;
-  transform-style: preserve-3d;
+/* (logo-wrap parallax transition is defined alongside its .revealed rule above) */
+
+/* Input shake animation for empty pledge name error */
+@keyframes input-shake {
+  0%,100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
 }
 
 /* ═══════════════════════════════════════════════════════════
