@@ -6,27 +6,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BNYA — Inauguration</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Google Fonts: Cinzel (ceremonial display) + Cormorant Garamond (body) -->
+  <!-- Google Fonts: Cinzel (ceremonial display) + Cormorant Garamond (body) + Alex Brush (calligraphy signature) -->
   <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap"
     rel="stylesheet" />
 </head>
 
 <body>
 
   <!-- ═══════════════════════════════════════════
+       INTERACTIVE CANVAS (Flower petals & sparks)
+       ═══════════════════════════════════════════ -->
+  <canvas id="particleCanvas" class="particle-canvas" aria-hidden="true"></canvas>
+
+  <!-- ═══════════════════════════════════════════
+       AUDIO CONTROLLER (Floating toggle)
+       ═══════════════════════════════════════════ -->
+  <button class="audio-toggle" id="audioToggle" aria-label="Toggle sound effects and background atmosphere">
+    <span class="audio-icon" aria-hidden="true">
+      <span class="bar bar-1"></span>
+      <span class="bar bar-2"></span>
+      <span class="bar bar-3"></span>
+    </span>
+    <span class="audio-text" id="audioToggleText">Unmute</span>
+  </button>
+
+  <!-- ═══════════════════════════════════════════
        BACKGROUND MANDALA (decorative SVG overlay)
        ═══════════════════════════════════════════ -->
   <div class="bg-mandala" aria-hidden="true">
     <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
-      <!-- Layered concentric decorative rings -->
-      <g opacity="0.06" stroke="#D4A017" fill="none" stroke-width="1">
+      <g opacity="0.05" stroke="#D4A017" fill="none" stroke-width="1.2">
         <circle cx="400" cy="400" r="350" />
         <circle cx="400" cy="400" r="300" />
         <circle cx="400" cy="400" r="250" />
         <circle cx="400" cy="400" r="200" />
         <circle cx="400" cy="400" r="150" />
-        <!-- Petal pattern outer -->
         <g transform="translate(400,400)">
           <ellipse rx="30" ry="120" transform="rotate(0)" />
           <ellipse rx="30" ry="120" transform="rotate(30)" />
@@ -34,7 +49,6 @@
           <ellipse rx="30" ry="120" transform="rotate(90)" />
           <ellipse rx="30" ry="120" transform="rotate(120)" />
           <ellipse rx="30" ry="120" transform="rotate(150)" />
-          <!-- Inner petals -->
           <ellipse rx="18" ry="70" transform="rotate(15)" />
           <ellipse rx="18" ry="70" transform="rotate(45)" />
           <ellipse rx="18" ry="70" transform="rotate(75)" />
@@ -47,12 +61,92 @@
   </div>
 
   <!-- ═══════════════════════════════════════════
-       LANDING SCREEN — shown before banner reveal
+       LANDING SCREEN
        ═══════════════════════════════════════════ -->
   <section class="landing-screen" id="landingScreen">
     <div class="landing-content">
-      <!-- Decorative lamp icon (Unicode diya) -->
-      <div class="diya-icon" aria-hidden="true">🪔</div>
+      
+      <!-- ── SACRED BRASS LAMP (INTERACTIVE SAMAI) ── -->
+      <div class="lamp-outer" id="lampOuter">
+        <svg class="sacred-lamp" viewBox="0 0 200 240" id="sacredLamp" aria-label="Traditional oil lamp">
+          <defs>
+            <linearGradient id="brassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FFEFA6" />
+              <stop offset="35%" stop-color="#E5B225" />
+              <stop offset="65%" stop-color="#B28200" />
+              <stop offset="100%" stop-color="#725000" />
+            </linearGradient>
+            <radialGradient id="flameGrad" cx="50%" cy="60%" r="50%">
+              <stop offset="0%" stop-color="#FFFFFF" />
+              <stop offset="25%" stop-color="#FFF39E" />
+              <stop offset="60%" stop-color="#E8730A" />
+              <stop offset="100%" stop-color="rgba(92,16,16,0)" />
+            </radialGradient>
+            <filter id="flameGlow">
+              <feGaussianBlur stdDeviation="3.5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          
+          <!-- Base & Stem -->
+          <path d="M 88,160 L 112,160 L 105,212 L 122,222 L 78,222 L 92,212 Z" fill="url(#brassGrad)" />
+          <ellipse cx="100" cy="221" rx="36" ry="7" fill="url(#brassGrad)" />
+          <ellipse cx="100" cy="212" rx="20" ry="4" fill="url(#brassGrad)" />
+          
+          <!-- Main Bowl Structure -->
+          <path d="M 48,138 C 48,168 152,168 152,138 C 152,143 140,156 100,156 C 60,156 48,143 48,138 Z" fill="url(#brassGrad)" />
+          <ellipse cx="100" cy="138" rx="52" ry="11" fill="#7C5D00" stroke="url(#brassGrad)" stroke-width="1" />
+          <ellipse cx="100" cy="138" rx="48" ry="8" fill="#473400" />
+          
+          <!-- Central Spindle -->
+          <path d="M 97,138 L 103,138 L 102,110 L 98,110 Z" fill="url(#brassGrad)" />
+          <circle cx="100" cy="107" r="5.5" fill="url(#brassGrad)" />
+
+          <!-- 5 Wicks with Hotspots & Flame Overlays -->
+          <!-- Wick 1 (Left Outer) -->
+          <g class="wick-group" id="wickGroup-0" data-wick="0">
+            <line x1="59" y1="135" x2="52" y2="127" stroke="#1C1400" stroke-width="3" stroke-linecap="round" />
+            <path class="flame" d="M 52,127 C 47,114 49,103 52,92 C 55,103 57,114 52,127 Z" fill="url(#flameGrad)" filter="url(#flameGlow)" />
+            <circle cx="52" cy="127" r="18" class="wick-hotspot" aria-label="Light wick 1" />
+          </g>
+          
+          <!-- Wick 2 (Left Inner) -->
+          <g class="wick-group" id="wickGroup-1" data-wick="1">
+            <line x1="79" y1="140" x2="73" y2="132" stroke="#1C1400" stroke-width="3" stroke-linecap="round" />
+            <path class="flame" d="M 73,132 C 68,119 70,108 73,97 C 76,108 78,119 73,132 Z" fill="url(#flameGrad)" filter="url(#flameGlow)" />
+            <circle cx="73" cy="132" r="18" class="wick-hotspot" aria-label="Light wick 2" />
+          </g>
+          
+          <!-- Wick 3 (Center) -->
+          <g class="wick-group" id="wickGroup-2" data-wick="2">
+            <line x1="100" y1="142" x2="100" y2="134" stroke="#1C1400" stroke-width="3" stroke-linecap="round" />
+            <path class="flame" d="M 100,134 C 95,121 97,110 100,99 C 103,110 105,121 100,134 Z" fill="url(#flameGrad)" filter="url(#flameGlow)" />
+            <circle cx="100" cy="134" r="18" class="wick-hotspot" aria-label="Light center wick" />
+          </g>
+          
+          <!-- Wick 4 (Right Inner) -->
+          <g class="wick-group" id="wickGroup-3" data-wick="3">
+            <line x1="121" y1="140" x2="127" y2="132" stroke="#1C1400" stroke-width="3" stroke-linecap="round" />
+            <path class="flame" d="M 127,132 C 122,119 124,108 127,97 C 130,108 132,119 127,132 Z" fill="url(#flameGrad)" filter="url(#flameGlow)" />
+            <circle cx="127" cy="132" r="18" class="wick-hotspot" aria-label="Light wick 4" />
+          </g>
+          
+          <!-- Wick 5 (Right Outer) -->
+          <g class="wick-group" id="wickGroup-4" data-wick="4">
+            <line x1="141" y1="135" x2="148" y2="127" stroke="#1C1400" stroke-width="3" stroke-linecap="round" />
+            <path class="flame" d="M 148,127 C 143,114 145,103 148,92 C 151,103 153,114 148,127 Z" fill="url(#flameGrad)" filter="url(#flameGlow)" />
+            <circle cx="148" cy="127" r="18" class="wick-hotspot" aria-label="Light wick 5" />
+          </g>
+        </svg>
+      </div>
+
+      <!-- Interactive helper instructions -->
+      <p class="lamp-instruction" id="lampInstruction">
+        Touch to light the 5 wicks of the sacred lamp to begin
+      </p>
 
       <p class="landing-eyebrow">You are cordially invited to witness</p>
       <h1 class="landing-title">The Grand<br />Inauguration</h1>
@@ -62,7 +156,7 @@
       </p>
 
       <!-- ── REVEAL BUTTON ── -->
-      <button class="reveal-btn" id="revealBtn" aria-label="Reveal inauguration banner">
+      <button class="reveal-btn" id="revealBtn" disabled aria-label="Reveal inauguration banner">
         <span class="reveal-btn__inner">
           <svg class="reveal-btn__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true">
@@ -114,13 +208,97 @@
           <!-- ── 3. FEATURED IMAGE ── -->
           <div class="featured-image-wrap" id="featuredImageWrap">
             <!-- Placeholder image — swap src with real photo if desired -->
-            <div class="featured-image-inner">
+            <div class="featured-image-inner" id="featuredImageInner">
               <img class="featured-img" src="banner.png" alt="BNYA inaugural gathering" />
             </div>
             <!-- Caption -->
             <p class="featured-caption">
               "A new dawn for youth-led service across Bharath"
             </p>
+          </div>
+
+          <!-- ── 4. VISION PILLARS (INTERACTIVE ACCORDION) ── -->
+          <div class="pillars-section" id="pillarsSection">
+            <h3 class="pillars-title">Our Vision Pillars</h3>
+            <div class="pillars-container">
+              
+              <div class="pillar-card" data-pillar="0">
+                <button class="pillar-header" aria-expanded="false" aria-controls="pillar-desc-0">
+                  <span class="pillar-icon">👑</span>
+                  <span class="pillar-name">Youth Leadership</span>
+                  <span class="pillar-arrow">▾</span>
+                </button>
+                <div class="pillar-body" id="pillar-desc-0">
+                  <p>Nurturing the next generation of change-makers by training young leaders through hands-on governance, community projects, and ethical leadership development programs.</p>
+                </div>
+              </div>
+              
+              <div class="pillar-card" data-pillar="1">
+                <button class="pillar-header" aria-expanded="false" aria-controls="pillar-desc-1">
+                  <span class="pillar-icon">🛠️</span>
+                  <span class="pillar-name">Skill Development</span>
+                  <span class="pillar-arrow">▾</span>
+                </button>
+                <div class="pillar-body" id="pillar-desc-1">
+                  <p>Equipping youth with modern technological, creative, and vocational skills. Providing resources for career mentorship, entrepreneurship, and digital literacy.</p>
+                </div>
+              </div>
+              
+              <div class="pillar-card" data-pillar="2">
+                <button class="pillar-header" aria-expanded="false" aria-controls="pillar-desc-2">
+                  <span class="pillar-icon">🏺</span>
+                  <span class="pillar-name">Cultural Heritage</span>
+                  <span class="pillar-arrow">▾</span>
+                </button>
+                <div class="pillar-body" id="pillar-desc-2">
+                  <p>Connecting modern youth with the rich heritage, traditions, and eternal values of Bharat, fostering a sense of pride, national integrity, and historical awareness.</p>
+                </div>
+              </div>
+              
+              <div class="pillar-card" data-pillar="3">
+                <button class="pillar-header" aria-expanded="false" aria-controls="pillar-desc-3">
+                  <span class="pillar-icon">🤝</span>
+                  <span class="pillar-name">Social Service</span>
+                  <span class="pillar-arrow">▾</span>
+                </button>
+                <div class="pillar-body" id="pillar-desc-3">
+                  <p>Executing impactful social initiatives including tree plantation, blood donation camps, rural development projects, and supporting underprivileged communities.</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ── 5. TAKE THE PLEDGE & GENERATE CERTIFICATE ── -->
+          <div class="pledge-section" id="pledgeSection">
+            <div class="pledge-divider" aria-hidden="true">✦ &nbsp; ✦ &nbsp; ✦</div>
+            <h3 class="pledge-title">Take the BNYA Pledge</h3>
+            <p class="pledge-text">
+              "I pledge to work for the empowerment of youth, preservation of our heritage, and service of our nation, Bharath. I support BNYA in its noble mission."
+            </p>
+            
+            <div class="pledge-form" id="pledgeForm">
+              <div class="input-wrap">
+                <input type="text" id="signerName" required maxlength="30" autocomplete="off" />
+                <label for="signerName">Enter Your Full Name</label>
+              </div>
+              <button class="pledge-btn" id="signPledgeBtn">Sign the Pledge</button>
+            </div>
+
+            <!-- Generated Certificate output -->
+            <div class="certificate-wrap hidden" id="certificateWrap">
+              <div class="certificate-canvas-container">
+                <canvas id="certCanvas" width="800" height="600" class="cert-canvas"></canvas>
+                <img id="certImage" class="cert-img" alt="Your BNYA Inauguration Certificate" />
+              </div>
+              <p class="cert-instruction">Your digital inauguration certificate has been generated.</p>
+              <button class="download-btn" id="downloadCertBtn">
+                <svg class="download-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 3v13m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Download Certificate
+              </button>
+            </div>
           </div>
 
           <!-- ── FOOTER WITHIN SCROLL ── -->

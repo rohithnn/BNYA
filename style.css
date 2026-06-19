@@ -196,10 +196,21 @@ html, body {
 .reveal-btn:active .reveal-btn__inner {
   transform: translateY(0);
 }
-/* Disable after click */
+/* Disable state — locked until lamp is lit */
 .reveal-btn:disabled {
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.45;
+  filter: grayscale(0.5);
+  cursor: not-allowed;
+}
+/* Unlocked celebration state — all wicks lit */
+.reveal-btn.btn-unlocked {
+  animation: btn-unlock-pulse 1s ease-in-out 3;
+}
+@keyframes btn-unlock-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(232,115,10,0); }
+  40%  { box-shadow: 0 0 0 10px rgba(212,160,23,0.45); }
+  100% { box-shadow: 0 0 0 0 rgba(232,115,10,0); }
 }
 
 .landing-flourish {
@@ -539,8 +550,444 @@ html, body {
 }
 
 /* ═══════════════════════════════════════════════════════════
+   NEW INTERACTIVE STYLES
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── CANVAS PARTICLE CANVAS ───────────────────────────────── */
+.particle-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 25; /* above everything to shower petals over elements */
+}
+
+/* ── FLOATING AUDIO TOGGLE ────────────────────────────────── */
+.audio-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(26, 10, 10, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  color: var(--ivory);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+.audio-toggle:hover {
+  background: rgba(212, 160, 23, 0.2);
+  border-color: var(--saffron);
+  transform: translateY(-1px);
+}
+.audio-icon {
+  display: flex;
+  align-items: flex-end;
+  gap: 2.5px;
+  width: 14px;
+  height: 14px;
+}
+.audio-icon .bar {
+  width: 3px;
+  height: 4px;
+  background-color: var(--gold);
+  border-radius: 1px;
+  transition: height 0.2s ease;
+}
+/* Pulsing bars when unmuted (playing) */
+.audio-toggle.playing .bar {
+  background-color: var(--saffron);
+  animation: audio-bar-pulse 0.8s ease-in-out infinite alternate;
+}
+.audio-toggle.playing .bar-1 { animation-delay: 0.1s; }
+.audio-toggle.playing .bar-2 { animation-delay: 0.3s; }
+.audio-toggle.playing .bar-3 { animation-delay: 0.5s; }
+
+@keyframes audio-bar-pulse {
+  0% { height: 3px; }
+  100% { height: 14px; }
+}
+
+/* ── SACRED LAMP (SAMAI) ─────────────────────────────────── */
+.lamp-outer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  perspective: 1000px;
+}
+.sacred-lamp {
+  width: min(220px, 45vw);
+  height: auto;
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
+}
+.wick-hotspot {
+  fill: transparent;
+  cursor: pointer;
+  transition: r 0.2s ease;
+}
+.wick-hotspot:hover {
+  r: 22px; /* larger tap/click area on hover */
+}
+.flame {
+  opacity: 0;
+  transform-origin: 50% 130px; /* relative to flame center */
+  transform: scale(0);
+  transition: opacity 0.5s var(--ease-reveal), transform 0.5s var(--ease-reveal);
+  pointer-events: none;
+}
+.wick-group.lit .flame {
+  opacity: 1;
+  transform: scale(1);
+  animation: flame-flicker 0.18s ease-in-out infinite alternate;
+}
+@keyframes flame-flicker {
+  0% {
+    transform: scale(0.96, 0.95) rotate(-1deg);
+    filter: drop-shadow(0 0 8px rgba(255, 220, 100, 0.6)) brightness(1);
+  }
+  100% {
+    transform: scale(1.04, 1.08) rotate(1deg);
+    filter: drop-shadow(0 0 16px rgba(232, 115, 10, 0.9)) brightness(1.2);
+  }
+}
+
+/* Instruction Text styling */
+.lamp-instruction {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 2.2vw, 1.1rem);
+  color: var(--champagne);
+  font-style: italic;
+  margin-bottom: 2rem;
+  opacity: 0.8;
+  animation: pulse-glow 2s ease-in-out infinite alternate;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+@keyframes pulse-glow {
+  0% { text-shadow: 0 0 2px rgba(245, 230, 200, 0.2); opacity: 0.7; }
+  100% { text-shadow: 0 0 10px rgba(214, 160, 23, 0.6); opacity: 1; color: var(--gold); }
+}
+
+/* ── VISION PILLARS ──────────────────────────────────────── */
+.pillars-section {
+  width: 100%;
+  margin-top: 2rem;
+  margin-bottom: 2.5rem;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s var(--ease-reveal), transform 0.8s var(--ease-reveal);
+}
+.pillars-section.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+.pillars-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+  color: var(--maroon);
+  letter-spacing: 0.1em;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  position: relative;
+}
+.pillars-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 2px;
+  background: var(--gold);
+  margin: 0.5rem auto 0;
+}
+.pillars-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.pillar-card {
+  background: rgba(255, 253, 245, 0.5);
+  border: 1px solid rgba(212, 160, 23, 0.3);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(92, 16, 16, 0.05);
+}
+.pillar-card:hover {
+  background: rgba(255, 253, 245, 0.85);
+  border-color: var(--gold);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(92, 16, 16, 0.1);
+}
+.pillar-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  outline: none;
+}
+.pillar-icon {
+  font-size: 1.4rem;
+  margin-right: 0.75rem;
+}
+.pillar-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+  color: var(--maroon);
+  flex-grow: 1;
+}
+.pillar-arrow {
+  font-size: 0.8rem;
+  color: var(--saffron);
+  transition: transform 0.3s ease;
+}
+.pillar-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0 1.25rem;
+  text-align: left;
+}
+.pillar-body p {
+  padding-bottom: 1.25rem;
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 2.2vw, 1.05rem);
+  color: #3d2f24;
+  line-height: 1.6;
+}
+/* Expanded state */
+.pillar-card.active {
+  background: rgba(255, 253, 245, 0.95);
+  border-color: var(--saffron);
+  box-shadow: 0 6px 20px rgba(232, 115, 10, 0.12);
+}
+.pillar-card.active .pillar-arrow {
+  transform: rotate(180deg);
+}
+.pillar-card.active .pillar-body {
+  max-height: 200px; /* Adjust according to contents */
+}
+
+/* ── PLEDGE SECTION & CERTIFICATE ────────────────────────── */
+.pledge-section {
+  width: 100%;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s var(--ease-reveal), transform 0.8s var(--ease-reveal);
+}
+.pledge-section.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+.pledge-divider {
+  font-size: 0.75rem;
+  letter-spacing: 0.6em;
+  color: var(--gold);
+  margin-bottom: 2rem;
+  opacity: 0.6;
+}
+.pledge-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+  color: var(--maroon);
+  letter-spacing: 0.08em;
+  margin-bottom: 1rem;
+}
+.pledge-text {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+  color: #4a3424;
+  line-height: 1.6;
+  max-width: 580px;
+  margin: 0 auto 2rem;
+  padding: 0 1rem;
+  border-left: 2px solid var(--gold);
+  border-right: 2px solid var(--gold);
+}
+.pledge-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 400px;
+  margin: 0 auto 1rem;
+}
+.input-wrap {
+  position: relative;
+  width: 100%;
+}
+.input-wrap input {
+  width: 100%;
+  padding: 0.75rem 0.5rem 0.25rem;
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  color: var(--maroon);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid rgba(92, 16, 16, 0.3);
+  outline: none;
+  text-align: center;
+  transition: border-color 0.3s ease;
+}
+.input-wrap input:focus {
+  border-color: var(--saffron);
+}
+.input-wrap label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: rgba(92, 16, 16, 0.6);
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+/* Floating label logic */
+.input-wrap input:focus + label,
+.input-wrap input:valid + label,
+.input-wrap input:not(:placeholder-shown) + label {
+  top: -12px;
+  font-size: 0.8rem;
+  font-family: var(--font-display);
+  color: var(--saffron);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.pledge-btn {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  background: linear-gradient(135deg, var(--maroon) 0%, #3a0808 100%);
+  border: 1px solid var(--gold);
+  padding: 0.75rem 2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(92, 16, 16, 0.2);
+}
+.pledge-btn:hover {
+  background: linear-gradient(135deg, var(--saffron) 0%, var(--maroon) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(232, 115, 10, 0.3);
+}
+.pledge-btn:active {
+  transform: translateY(0);
+}
+
+/* Certificate Result */
+.certificate-wrap {
+  margin-top: 2.5rem;
+  animation: cert-fade-in 0.8s var(--ease-reveal) both;
+}
+@keyframes cert-fade-in {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.certificate-canvas-container {
+  position: relative;
+  width: 100%;
+  max-width: 550px;
+  margin: 0 auto 1.5rem;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 4px rgba(212, 160, 23, 0.4),
+    0 15px 40px rgba(0, 0, 0, 0.35);
+  background: #fdf6e3;
+  aspect-ratio: 4 / 3;
+}
+.cert-canvas {
+  display: none; /* keep hidden, we show the image version for better mobile support */
+}
+.cert-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+.cert-instruction {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--maroon);
+  opacity: 0.8;
+  margin-bottom: 1rem;
+}
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--velvet);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--saffron) 100%);
+  border: 1px solid var(--gold);
+  padding: 0.75rem 1.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(212, 160, 23, 0.3);
+}
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(232, 115, 10, 0.5);
+}
+.download-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+/* Utilities */
+.hidden {
+  display: none !important;
+}
+
+/* 3D PARALLAX EFFECT */
+.featured-image-inner {
+  transition: transform 0.15s ease-out;
+  transform-style: preserve-3d;
+}
+.logo-wrap {
+  transition: transform 0.15s ease-out;
+  transform-style: preserve-3d;
+}
+
+/* ═══════════════════════════════════════════════════════════
    RESPONSIVE ADJUSTMENTS
-═══════════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
   .ngo-name {
     font-size: clamp(0.95rem, 5vw, 1.4rem);
