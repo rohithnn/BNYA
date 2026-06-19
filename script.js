@@ -28,15 +28,9 @@
   const sacredLamp      = document.getElementById('sacredLamp');
   const wicks           = document.querySelectorAll('.wick-hotspot');
   
-  const signerNameInput = document.getElementById('signerName');
-  const signPledgeBtn   = document.getElementById('signPledgeBtn');
-  const pledgeForm      = document.getElementById('pledgeForm');
-  const certificateWrap = document.getElementById('certificateWrap');
-  const certCanvas      = document.getElementById('certCanvas');
-  const certImage       = document.getElementById('certImage');
-  const downloadCertBtn = document.getElementById('downloadCertBtn');
-  
   const featuredImageInner = document.getElementById('featuredImageInner');
+  const pillarHeaders     = document.querySelectorAll('.pillar-header');
+  const pillarCards       = document.querySelectorAll('.pillar-card');
 
   /* ── CONSTANTS ───────────────────────────────────────── */
   const NGO_NAME      = 'BHARATH NAVA YUVA ASSOCIATION';
@@ -484,19 +478,19 @@
   /* ── SACRED LAMP (SAMAI) CEREMONY ──────────────────────── */
 
   const checkLampState = () => {
-    if (litWicks.size === 5) {
-      // 1. All wicks are lit
+    // Unlock reveal when at least one wick is lit; run once
+    if (litWicks.size >= 1 && revealBtn.disabled) {
       lampInstruction.textContent = "The sacred lamp is lit! You may now reveal the banner.";
       lampInstruction.style.color = '#FFEFA6';
-      
-      // 2. Play celebratory sounds
+
+      // Play celebratory sounds
       playCelebrationChime();
-      
-      // 3. Enable Reveal button and add glow animation
+
+      // Enable Reveal button and add glow animation
       revealBtn.disabled = false;
       revealBtn.classList.add('btn-unlocked');
-      
-      // 4. Burst sparks from the lamp center
+
+      // Burst sparks from the lamp center
       const rect = sacredLamp.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
@@ -621,8 +615,7 @@
     featuredWrap.classList.add('revealed');
     await wait(600);
 
-    // ── STEP 9: Fade in Pledge & Signature Card ──────────
-    document.getElementById('pledgeSection').classList.add('revealed');
+    // ── STEP 9: Fade in featured image and content ───────
     await wait(500);
 
     // ── STEP 10: Fade in footer ────────────────────────────
@@ -664,224 +657,6 @@
 
   /* ── PLEDGE & CANVAS CERTIFICATE GENERATOR ──────────────── */
 
-  const generateCertificate = (name) => {
-    const canvasContext = certCanvas.getContext('2d');
-    const w = certCanvas.width;
-    const h = certCanvas.height;
-
-    // Draw parchment paper texture
-    canvasContext.fillStyle = '#fdf6e3';
-    canvasContext.fillRect(0, 0, w, h);
-    
-    // Draw gold outer border
-    canvasContext.strokeStyle = '#D4A017';
-    canvasContext.lineWidth = 4;
-    canvasContext.strokeRect(20, 20, w - 40, h - 40);
-
-    // Draw thin maroon inner border
-    canvasContext.strokeStyle = '#5C1010';
-    canvasContext.lineWidth = 1.5;
-    canvasContext.strokeRect(28, 28, w - 56, h - 56);
-
-    // Draw corner diamond flourishes
-    const drawDiamond = (x, y) => {
-      canvasContext.fillStyle = '#D4A017';
-      canvasContext.beginPath();
-      canvasContext.moveTo(x, y - 9);
-      canvasContext.lineTo(x + 9, y);
-      canvasContext.lineTo(x, y + 9);
-      canvasContext.lineTo(x - 9, y);
-      canvasContext.closePath();
-      canvasContext.fill();
-    };
-    drawDiamond(28, 28);
-    drawDiamond(w - 28, 28);
-    drawDiamond(28, h - 28);
-    drawDiamond(w - 28, h - 28);
-
-    // Logo image loading
-    const logo = new Image();
-    logo.src = 'logo.png';
-    logo.onload = function() {
-      const logoSize = 65;
-      canvasContext.drawImage(logo, w / 2 - logoSize / 2, 45, logoSize, logoSize);
-      drawCertText();
-    };
-    logo.onerror = function() {
-      // Golden mandala vector fallback if file fails to load
-      canvasContext.fillStyle = '#D4A017';
-      canvasContext.beginPath();
-      canvasContext.arc(w / 2, 77, 25, 0, Math.PI * 2);
-      canvasContext.fill();
-      drawCertText();
-    };
-
-    function drawCertText() {
-      canvasContext.textAlign = 'center';
-      
-      // Heading
-      canvasContext.fillStyle = '#5C1010';
-      canvasContext.font = 'bold 22px Cinzel, Georgia, serif';
-      canvasContext.fillText('BHARATH NAVA YUVA ASSOCIATION', w / 2, 145);
-      
-      // Tagline
-      canvasContext.fillStyle = '#E8730A';
-      canvasContext.font = 'italic 15px "Cormorant Garamond", Georgia, serif';
-      canvasContext.fillText('Empowering Youth  ·  Serving Bharat', w / 2, 172);
-
-      // Separator Line
-      canvasContext.strokeStyle = '#D4A017';
-      canvasContext.lineWidth = 1;
-      canvasContext.beginPath();
-      canvasContext.moveTo(w / 2 - 100, 192);
-      canvasContext.lineTo(w / 2 + 100, 192);
-      canvasContext.stroke();
-
-      // Certificate title
-      canvasContext.fillStyle = '#5C1010';
-      canvasContext.font = 'bold 18px Cinzel, Georgia, serif';
-      canvasContext.fillText('PLEDGE OF ASSOCIATION', w / 2, 225);
-
-      // Certificate body 1
-      canvasContext.fillStyle = '#4a3424';
-      canvasContext.font = 'italic 16px "Cormorant Garamond", Georgia, serif';
-      canvasContext.fillText('This is to certify that', w / 2, 265);
-
-      // Signer's Name in handwritten calligraphy style (Alex Brush)
-      canvasContext.fillStyle = '#E8730A';
-      canvasContext.font = '52px "Alex Brush", cursive';
-      canvasContext.fillText(name, w / 2, 335);
-
-      // Signer name underline
-      canvasContext.strokeStyle = 'rgba(212, 160, 23, 0.4)';
-      canvasContext.lineWidth = 2;
-      canvasContext.beginPath();
-      canvasContext.moveTo(w / 2 - 170, 348);
-      canvasContext.lineTo(w / 2 + 170, 348);
-      canvasContext.stroke();
-
-      // Certificate body 2 (wrapped)
-      canvasContext.fillStyle = '#4a3424';
-      canvasContext.font = '16px "Cormorant Garamond", Georgia, serif';
-      
-      const wrapText = (text, x, y, maxWidth, lineHeight) => {
-        const words = text.split(' ');
-        let line = '';
-        let currentY = y;
-        for (let n = 0; n < words.length; n++) {
-          let testLine = line + words[n] + ' ';
-          let metrics = canvasContext.measureText(testLine);
-          if (metrics.width > maxWidth && n > 0) {
-            canvasContext.fillText(line, x, currentY);
-            line = words[n] + ' ';
-            currentY += lineHeight;
-          } else {
-            line = testLine;
-          }
-        }
-        canvasContext.fillText(line, x, currentY);
-      };
-
-      const pledgeTxt = 'has solemnly taken the BNYA Pledge, promising to work dedicatedly for the empowerment of youth, preservation of national heritage, and selfless service of Bharath.';
-      wrapText(pledgeTxt, w / 2, 380, 520, 24);
-
-      // Date string
-      const today = new Date();
-      const dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-      canvasContext.fillStyle = '#5C1010';
-      canvasContext.font = '13px "Cormorant Garamond", Georgia, serif';
-      canvasContext.fillText('Date: ' + dateStr, 150, 510);
-      canvasContext.strokeStyle = '#D4A017';
-      canvasContext.lineWidth = 1;
-      canvasContext.beginPath();
-      canvasContext.moveTo(90, 518);
-      canvasContext.lineTo(210, 518);
-      canvasContext.stroke();
-
-      // Signature Placeholder
-      canvasContext.fillStyle = '#5C1010';
-      canvasContext.font = 'italic 16px "Alex Brush", cursive';
-      canvasContext.fillText('BNYA Founding Board', w - 150, 498);
-      canvasContext.font = '13px "Cormorant Garamond", Georgia, serif';
-      canvasContext.fillText('Authorized Signature', w - 150, 512);
-      canvasContext.beginPath();
-      canvasContext.moveTo(w - 210, 518);
-      canvasContext.lineTo(w - 90, 518);
-      canvasContext.stroke();
-
-      // Draw red/orange BNYA Seal
-      canvasContext.strokeStyle = 'rgba(232, 115, 10, 0.4)';
-      canvasContext.lineWidth = 1.5;
-      canvasContext.beginPath();
-      canvasContext.arc(w / 2, 505, 28, 0, Math.PI * 2);
-      canvasContext.stroke();
-      canvasContext.fillStyle = 'rgba(232, 115, 10, 0.4)';
-      canvasContext.font = '8px Cinzel, sans-serif';
-      canvasContext.fillText('BNYA SEAL', w / 2, 503);
-      canvasContext.font = '6px Cinzel, sans-serif';
-      canvasContext.fillText('INAUGURATED', w / 2, 511);
-
-      // Render image output
-      certImage.src = certCanvas.toDataURL('image/png');
-    }
-  };
-
-  const handleSignPledge = () => {
-    const name = signerNameInput.value.trim();
-    if (!name) {
-      signerNameInput.focus();
-      signerNameInput.style.borderBottom = '2px solid #c0392b';
-      signerNameInput.style.animation = 'input-shake 0.4s ease';
-      setTimeout(() => { signerNameInput.style.animation = ''; }, 400);
-      return;
-    }
-
-    signerNameInput.style.borderBottom = '';
-    
-    // Play celebratory chimed arpeggio
-    playCelebrationChime();
-    
-    // Hide form, show certificate block
-    pledgeForm?.classList.add('hidden');
-    certificateWrap.classList.remove('hidden');
-
-    // Wait for fonts to be ready so signature renders correctly in "Alex Brush"
-    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => {
-      generateCertificate(name);
-      
-      // Trigger spark shower around certificate
-      const rect = certificateWrap.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      spawnBurst(cx, cy, 25, 'spark');
-    });
-  };
-
-  signPledgeBtn.addEventListener('click', handleSignPledge);
-
-  signerNameInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      handleSignPledge();
-    }
-  });
-
-  const handleDownloadCert = () => {
-    if (!certImage.src) {
-      return;
-    }
-
-    const name = signerNameInput.value.trim().replace(/\s+/g, '_') || 'BNYA';
-    const link = document.createElement('a');
-    link.download = `BNYA_Pledge_Certificate_${name}.png`;
-    link.href = certImage.src;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    // Play feedback sound
-    playBellChime(880); // high note
-  };
-
-  downloadCertBtn.addEventListener('click', handleDownloadCert);
+  const featuredImageInner = document.getElementById('featuredImageInner');
 
 })();

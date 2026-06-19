@@ -105,47 +105,18 @@
           <path d="M 97,138 L 103,138 L 102,110 L 98,110 Z" fill="url(#brassGrad)" />
           <circle cx="100" cy="107" r="5.5" fill="url(#brassGrad)" />
 
-          <!-- 5 Wicks with Hotspots & Flame Overlays -->
-          <!-- Wick 1 (Left Outer) -->
-          <g class="wick-group" id="wickGroup-0" data-wick="0">
-            <line x1="59" y1="135" x2="52" y2="127" stroke="#1C1400" stroke-width="3" stroke-linecap="round" />
-            <path class="flame" d="M 52,127 C 47,114 49,103 52,92 C 55,103 57,114 52,127 Z" fill="url(#flameGrad)" filter="url(#flameGlow)" />
-            <circle cx="52" cy="127" r="18" class="wick-hotspot" aria-label="Light wick 1" />
-          </g>
-          
-          <!-- Wick 2 (Left Inner) -->
-          <g class="wick-group" id="wickGroup-1" data-wick="1">
-            <line x1="79" y1="140" x2="73" y2="132" stroke="#1C1400" stroke-width="3" stroke-linecap="round" />
-            <path class="flame" d="M 73,132 C 68,119 70,108 73,97 C 76,108 78,119 73,132 Z" fill="url(#flameGrad)" filter="url(#flameGlow)" />
-            <circle cx="73" cy="132" r="18" class="wick-hotspot" aria-label="Light wick 2" />
-          </g>
-          
-          <!-- Wick 3 (Center) -->
+          <!-- Wick (center only) -->
           <g class="wick-group" id="wickGroup-2" data-wick="2">
             <line x1="100" y1="142" x2="100" y2="134" stroke="#1C1400" stroke-width="3" stroke-linecap="round" />
             <path class="flame" d="M 100,134 C 95,121 97,110 100,99 C 103,110 105,121 100,134 Z" fill="url(#flameGrad)" filter="url(#flameGlow)" />
             <circle cx="100" cy="134" r="18" class="wick-hotspot" aria-label="Light center wick" />
-          </g>
-          
-          <!-- Wick 4 (Right Inner) -->
-          <g class="wick-group" id="wickGroup-3" data-wick="3">
-            <line x1="121" y1="140" x2="127" y2="132" stroke="#1C1400" stroke-width="3" stroke-linecap="round" />
-            <path class="flame" d="M 127,132 C 122,119 124,108 127,97 C 130,108 132,119 127,132 Z" fill="url(#flameGrad)" filter="url(#flameGlow)" />
-            <circle cx="127" cy="132" r="18" class="wick-hotspot" aria-label="Light wick 4" />
-          </g>
-          
-          <!-- Wick 5 (Right Outer) -->
-          <g class="wick-group" id="wickGroup-4" data-wick="4">
-            <line x1="141" y1="135" x2="148" y2="127" stroke="#1C1400" stroke-width="3" stroke-linecap="round" />
-            <path class="flame" d="M 148,127 C 143,114 145,103 148,92 C 151,103 153,114 148,127 Z" fill="url(#flameGrad)" filter="url(#flameGlow)" />
-            <circle cx="148" cy="127" r="18" class="wick-hotspot" aria-label="Light wick 5" />
           </g>
         </svg>
       </div>
 
       <!-- Interactive helper instructions -->
       <p class="lamp-instruction" id="lampInstruction">
-        Touch to light the 5 wicks of the sacred lamp to begin
+        Touch to light the sacred lamp to begin
       </p>
 
       <p class="landing-eyebrow">You are cordially invited to witness</p>
@@ -217,30 +188,16 @@
             </p>
           </div>
 
-          <!-- ── 4. TAKE THE PLEDGE & GENERATE CERTIFICATE ── -->
-          <div class="pledge-section" id="pledgeSection">
-            <div class="pledge-divider" aria-hidden="true">✦ &nbsp; ✦ &nbsp; ✦</div>
-            <h3 class="pledge-title">Take the BNYA Pledge</h3>
-            <p class="pledge-text">
-              "I pledge to work for the empowerment of youth, preservation of our heritage, and service of our nation, Bharath. I support BNYA in its noble mission."
-            </p>
-            
-            
-
-            <!-- Generated Certificate output -->
-            <div class="certificate-wrap hidden" id="certificateWrap">
-              <div class="certificate-canvas-container">
-                <canvas id="certCanvas" width="800" height="600" class="cert-canvas"></canvas>
-                <img id="certImage" class="cert-img" alt="Your BNYA Inauguration Certificate" />
-              </div>
-              <p class="cert-instruction">Your digital inauguration certificate has been generated.</p>
-              <button class="download-btn" id="downloadCertBtn">
-                <svg class="download-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 3v13m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                Download Certificate
-              </button>
+          <!-- ── 4. FEATURED IMAGE AREA ── -->
+          <div class="featured-image-wrap" id="featuredImageWrap">
+            <!-- Placeholder image — swap src with real photo if desired -->
+            <div class="featured-image-inner" id="featuredImageInner">
+              <img class="featured-img" src="banner.png" alt="BNYA inaugural gathering" />
             </div>
+            <!-- Caption -->
+            <p class="featured-caption">
+              "A new dawn for youth-led service across Bharath"
+            </p>
           </div>
 
           <!-- ── FOOTER WITHIN SCROLL ── -->
