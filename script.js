@@ -277,26 +277,12 @@
   /* ── AUDIO CONTROL INTERACTION ────────────────────────── */
 
   const toggleMute = () => {
-    initAudio();
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
-
-    isMuted = !isMuted;
-
-    if (isMuted) {
-      audioToggle.classList.remove('playing');
-      audioToggleText.textContent = 'Unmute';
-      stopDrone();
-    } else {
-      audioToggle.classList.add('playing');
-      audioToggleText.textContent = 'Mute';
-      startDrone();
-      playBellChime(440); // play feedback chime
-    }
+    // Audio has been disabled for the current experience.
   };
 
-  audioToggle.addEventListener('click', toggleMute);
+  if (audioToggle) {
+    audioToggle.style.display = 'none';
+  }
 
   /* ── CANVAS FLOWER PETALS & SPARKS SYSTEM ──────────────── */
   const ctx = particleCanvas ? particleCanvas.getContext('2d') : null;
@@ -425,16 +411,20 @@
   // Passive falling timer
   let frameCount = 0;
 
+  let particleIntensity = 3;
+
   const animateParticles = () => {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     
     // Continuous spawning of petals when parchment is unrolled
     if (isParchmentUnrolled) {
       frameCount++;
-      if (frameCount % 10 === 0) {
+      if (frameCount % 5 === 0) {
         const types = ['rose', 'marigold'];
-        const rType = types[Math.floor(Math.random() * types.length)];
-        particles.push(new Particle(Math.random() * canvasWidth, -20, rType, 'spawner'));
+        for (let i = 0; i < particleIntensity; i++) {
+          const rType = types[Math.floor(Math.random() * types.length)];
+          particles.push(new Particle(Math.random() * canvasWidth, -20, rType, 'spawner'));
+        }
       }
     }
 
@@ -483,9 +473,6 @@
       lampInstruction.textContent = "The sacred lamp is lit! You may now reveal the banner.";
       lampInstruction.style.color = '#FFEFA6';
 
-      // Play celebratory sounds
-      playCelebrationChime();
-
       // Enable Reveal button and add glow animation
       revealBtn.disabled = false;
       revealBtn.classList.add('btn-unlocked');
@@ -501,10 +488,6 @@
   wickGroups.forEach(group => {
     group.addEventListener('click', (e) => {
       e.stopPropagation();
-      initAudio();
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
 
       const index = parseInt(group.getAttribute('data-wick'));
       const wick = group.querySelector('.wick-hotspot');
@@ -512,9 +495,6 @@
       if (!litWicks.has(index)) {
         litWicks.add(index);
         group.classList.add('lit');
-        
-        // Sound and spark effects
-        playIgniteSound();
         
         const rect = wick.getBoundingClientRect();
         const wx = rect.left + rect.width / 2;
@@ -614,6 +594,10 @@
     // ── STEP 8: Fade in featured image ───────────────────
     featuredWrap.classList.add('revealed');
     await wait(600);
+    particleIntensity = 8;
+    spawnBurst(canvasWidth * 0.5, 120, 50, 'rose');
+    spawnBurst(canvasWidth * 0.2, 100, 30, 'marigold');
+    spawnBurst(canvasWidth * 0.8, 100, 30, 'marigold');
 
     // ── STEP 9: Fade in featured image and content ───────
     await wait(500);
@@ -623,7 +607,7 @@
 
     // ── STEP 11: Redirect after 20 seconds ───────────────
     setTimeout(() => {
-      window.location.href = 'https://bnya.vercel.app';
+      window.location.replace('https://bnya2026.netlify.app/');
     }, 20000);
   };
 
